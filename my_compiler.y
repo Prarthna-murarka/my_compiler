@@ -18,6 +18,7 @@ int id_count=1;
 int label_count = 1;
 char buff_id_count[10];
 char buff_label_count[10];
+char *label;
 
 struct label_code{
 	char *addr;
@@ -93,10 +94,15 @@ struct label_code* Lc_ptr;}
 
 %token <i_num> DIGIT
 %token <f_num> FLOAT
+%token <str> AND OR NOT TRUE FALSE
 %token <str> TYPE
 %token <str> ID
-%type <str> identifier number declaration 
+
+%type <str> identifier number rel_exp declaration statement_list 
 %type <Lc_ptr> statement expression
+
+
+%left <str>  RELATIONAL_OP;
 %right '='
 %left '+' '-' 
 %left '*' '/' '%'
@@ -104,6 +110,21 @@ struct label_code* Lc_ptr;}
 
 
 %%
+
+
+statement_list : statement {   // forming group of statements
+															 $$=$1->code;
+														}
+								|statement_list statement { // appending the new statement at the end of statement_list<<ENDL;
+																	cout<<"STATEMENT LIST (APPENDING)";
+																	new_line = (char *)malloc(strlen($1)+strlen($2->code)+10);
+																	strcat(new_line,$1);
+																	strcat(new_line,"\n");
+																	strcat(new_line,$2->code);
+								                  cout<<"new list= "<<new_line<<endl;
+								                  $$=new_line;
+								                 }
+								;                       
 
 statement :	
            declaration '=' expression ';' { printf("Assignment statement along with declaration\n");
@@ -153,12 +174,132 @@ statement :
 																							rtn_ptr->code = temp;
      																					$$ =rtn_ptr;      																		
           																		}
+          																		
+           | declaration ';' {                rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
+																							rtn_ptr->addr = (char *)malloc(20);
+																							rtn_ptr->addr = $1;		
+																							rtn_ptr->code = (char *)malloc(2);
+																							rtn_ptr->code[0] = 0;		
+																							$$ = rtn_ptr;
+										 				 }
+           | expression ';' {$$=$1;}
+           																	
 					;
 
 declaration :   TYPE identifier  { printf("Declaration \n");
 																	 $$=$2; }
 
 						;
+						
+						
+rel_exp :  expression RELATIONAL_OP expression { cout<<"RELATIONAL OPERATOR"<<$2<<endl;
+																							new_line = (char *)malloc(30);
+																							new_line[0] = 0;																
+																							strcat(new_line,"if(");
+																							strcat(new_line,$1->addr);
+																							strcat(new_line,$2);																							
+																							strcat(new_line,$3->addr);
+																							strcat(new_line,") goto TRUE \n goto FAIL");
+																							printf("new line added is = \n");
+																							puts(new_line);																							
+																							temp = (char *)malloc(strlen($1->code)+strlen($3->code)+20);
+		                                          temp[0] = 0;	
+		                                          if ($1->code!=0){
+																								strcat(temp,$1->code);
+																								strcat(temp,"\n");
+																								}		
+		                                          if ($3->code!=0){
+																								strcat(temp,$3->code);
+																								strcat(temp,"\n");
+																								}																																														
+																							strcat(temp,new_line);
+																							printf("Code generated till now is = \n");
+																							puts(temp);
+																							$$=temp;
+																							}
+																							
+			  |  rel_exp AND rel_exp { cout<<"RELATIONAL OPERATOR -> AND "<<endl;
+			  													char *rel_exp1=$1,*rel_exp2=$3;
+			  													label = gen_label();
+			                            char *find = strstr (rel_exp1,"TRUE");		
+			                            // find and replace all the true with new label
+																	while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"   ",(4-strlen(label)));
+	                                                    find= strstr (rel_exp1,"TRUE");}
+                                  temp= (char *)malloc(strlen(rel_exp1)+strlen(rel_exp2)+10);
+			                            temp[0] = 0;
+                                  strcat(temp,rel_exp1);
+			                            strcat(temp,"\n");
+			                            strcat(temp,label);
+																	strcat(temp," : ");
+																	strcat(temp,rel_exp2);
+																	cout<<"new line= "<<temp<<endl;																	 
+																	$$ = temp;}																				
+			  |  rel_exp OR rel_exp { cout<<"RELATIONAL OPERATOR -> OR "<<endl;
+			  													char *rel_exp1=$1,*rel_exp2=$3;
+			  													label =gen_label();
+			                            char *find = strstr (rel_exp1,"FAIL");		
+			                            // find and replace all the true with new label
+																	while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"   ",(4-strlen(label)));
+	                                                    find= strstr (rel_exp1,"FAIL");}
+                                  temp= (char *)malloc(strlen(rel_exp1)+strlen(rel_exp2)+10);
+			                            temp[0] = 0;
+                                  strcat(temp,rel_exp1);
+                                  strcat(temp,"\n");
+			                            strcat(temp,label);
+																	strcat(temp," : ");			                           
+																	strcat(temp,rel_exp2);
+																	cout<<"new line= "<<temp<<endl;																		
+																	$$ = temp;}				
+			  |  NOT '(' rel_exp ')' {  cout<<"RELATIONAL OPERATOR-> AND "<<endl;    // as the operator is not, all the true will be replaced by flase and false with true
+			                                                                         // for this temp. label xxxx is used
+			  													puts($3);
+																	char *rel_exp= $3;																	                                   
+																	label = "xxxx";
+																	char *find = strstr (rel_exp,"TRUE");
+																		while(find!=NULL){
+																		strncpy (find,label,strlen(label));
+																		find = strstr (rel_exp,"TRUE");
+																		}
+		
+																	label = "TRUE";
+																	find = strstr (rel_exp,"FAIL");		
+																	while(find!=NULL){
+																		strncpy (find,label,strlen(label));
+																		find = strstr (rel_exp,"FAIL");
+																		}
+
+																	label = "FAIL";
+																	find = strstr (rel_exp,"xxxx");		
+																	while(find!=NULL){
+																		strncpy (find,label,strlen(label));
+																		find = strstr (rel_exp,"xxxx");
+																		}		
+																	$$ = rel_exp;
+			                          }
+			  
+			  												
+			  | '(' rel_exp ')' {$$=$2;}
+			  | TRUE { cout<<"TRUE"<<endl;
+			           new_line=(char *)malloc(10);
+			           new_line[0]=0;
+			           strcat(new_line," GOTO TRUE\n");
+			           cout<<"new line added= "<<new_line<<endl;
+			           $$=new_line;
+			  				}
+			  | FALSE { cout<<"FALSE"<<endl;
+			           new_line=(char *)malloc(10);
+			           new_line[0]=0;
+			           strcat(new_line," GOTO FAIL\n");
+			           cout<<"new line added= "<<new_line<<endl;
+			           $$=new_line;
+			  
+			  				}																			
+				;      				
+						
 						
 expression  : '(' expression ')' { $$=$2;} 
        
@@ -174,8 +315,8 @@ expression  : '(' expression ')' { $$=$2;}
 						| expression '+' expression {printf("exp addition exp \n");
           															 $$ =arithmetic_operation($1->code,$3->code,$1->addr,$3->addr,"+");	}
 						| expression '-' expression {printf("exp substraction exp \n");
-          															 $$ =arithmetic_operation($1->code,$3->code,$1->addr,$3->addr,"-");	}						
-             | number    { printf("Expression (exp=number) \n");
+          															 $$ =arithmetic_operation($1->code,$3->code,$1->addr,$3->addr,"-");	}														 				
+            | number    { printf("Expression (exp=number) \n");
 														rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
 													  rtn_ptr->addr = (char *)malloc(20);
 														rtn_ptr->addr = $1;
@@ -183,6 +324,15 @@ expression  : '(' expression ')' { $$=$2;}
 		                        rtn_ptr->code[0] = 0;
 														$$=rtn_ptr;
 													}
+													
+   					| identifier { printf("exp equals to identifier which is initialized");    					
+   					                rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
+													  rtn_ptr->addr = (char *)malloc(20);
+														rtn_ptr->addr = $1;
+														rtn_ptr->code = (char *)malloc(2);  // no code associated, just add which is the number itself
+		                        rtn_ptr->code[0] =0;
+														$$=rtn_ptr;
+														}							
 						;
 						
 number      : DIGIT  {  printf("DIGIT : %d\n",$1);	

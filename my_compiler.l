@@ -12,6 +12,7 @@ FLOAT [0-9]+[.][0-9]*
 OTHERS ['=' ';' '(' ')' '{' '}']
 TYPE ["int" "float"]
 ARITHMETIC_OPERATORS [ '+' '\-' '*' '/' '%' '^' ]
+RELATIONAL_OPERATORS [ "==" ">=" "<=" "<" ">" "!="]
 %%
 
                         
@@ -24,8 +25,34 @@ ARITHMETIC_OPERATORS [ '+' '\-' '*' '/' '%' '^' ]
 "int"                 { return (TYPE);}
 "float"               { return (TYPE);}
 {ARITHMETIC_OPERATORS} { char a=yytext[0]; return a;}
+">"	{yylval.str = strdup(yytext);
+		return (RELATIONAL_OP);}
+"<"	{yylval.str = strdup(yytext);
+		return (RELATIONAL_OP);}
+">="	{yylval.str = strdup(yytext);
+		return (RELATIONAL_OP);}
+"<="	{yylval.str = strdup(yytext);
+		return (RELATIONAL_OP); }
+"!="	{yylval.str = strdup(yytext);
+		return (RELATIONAL_OP);}
+"=="	{yylval.str = strdup(yytext);
+		return (RELATIONAL_OP);}
+		
+"||"	{yylval.str = strdup(yytext);
+		return (OR);}
+"&&"	{yylval.str = strdup(yytext);
+		return (AND);}
+"!"	{yylval.str = strdup(yytext);
+		return (NOT);}
+"true"	{yylval.str = strdup(yytext);
+		return (TRUE);}
+"false"	{yylval.str = strdup(yytext);
+		return (FALSE);}		
+		
+		
 {ID} 										{ yylval.str=strdup(yytext);
-                       		return ID;}								             
+                       		return ID;}	
+                       									             
 
 
 

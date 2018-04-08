@@ -41,15 +41,27 @@
    enum yytokentype {
      DIGIT = 258,
      FLOAT = 259,
-     TYPE = 260,
-     ID = 261
+     AND = 260,
+     OR = 261,
+     NOT = 262,
+     TRUE = 263,
+     FALSE = 264,
+     TYPE = 265,
+     ID = 266,
+     RELATIONAL_OP = 267
    };
 #endif
 /* Tokens.  */
 #define DIGIT 258
 #define FLOAT 259
-#define TYPE 260
-#define ID 261
+#define AND 260
+#define OR 261
+#define NOT 262
+#define TRUE 263
+#define FALSE 264
+#define TYPE 265
+#define ID 266
+#define RELATIONAL_OP 267
 
 
 
@@ -59,7 +71,7 @@ typedef union YYSTYPE
 {
 
 /* Line 1676 of yacc.c  */
-#line 86 "my_compiler.y"
+#line 87 "my_compiler.y"
 
 char* str;
 int i_num;
@@ -69,7 +81,7 @@ struct label_code* Lc_ptr;
 
 
 /* Line 1676 of yacc.c  */
-#line 73 "y.tab.h"
+#line 85 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
