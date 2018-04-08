@@ -46,9 +46,12 @@
      NOT = 262,
      TRUE = 263,
      FALSE = 264,
-     TYPE = 265,
-     ID = 266,
-     RELATIONAL_OP = 267
+     IF = 265,
+     ELSE = 266,
+     WHILE = 267,
+     TYPE = 268,
+     ID = 269,
+     RELATIONAL_OP = 270
    };
 #endif
 /* Tokens.  */
@@ -59,9 +62,12 @@
 #define NOT 262
 #define TRUE 263
 #define FALSE 264
-#define TYPE 265
-#define ID 266
-#define RELATIONAL_OP 267
+#define IF 265
+#define ELSE 266
+#define WHILE 267
+#define TYPE 268
+#define ID 269
+#define RELATIONAL_OP 270
 
 
 
@@ -81,7 +87,7 @@ struct label_code* Lc_ptr;
 
 
 /* Line 1676 of yacc.c  */
-#line 85 "y.tab.h"
+#line 91 "y.tab.h"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */

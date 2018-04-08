@@ -1,1 +1,25 @@
-int c=a+b;
+
+int a=5;
+int m=1+34+6;
+
+while(t>f)
+{
+ if(a>b)
+ {
+ c=3+4;
+ }
+}
+
+int v=67;
+
+while(t>f)
+{
+ if(a>b)
+ {
+ c=3+4;
+ }
+}
+
+
+
+

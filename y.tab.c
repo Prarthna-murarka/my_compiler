@@ -135,7 +135,7 @@ label_code* arithmetic_operation(char* left_code,char* right_code,char *left_add
 																							strcat(new_line,right_addr);
 																							printf("new line added is = \n");
 																							puts(new_line);
-																							temp = (char *)malloc(strlen(right_code)+strlen(left_code)+6);
+																							temp = (char *)malloc(strlen(right_code)+strlen(left_code)+20);
 		                                          temp[0] = 0;	
 		                                          if (left_code!=0){
 																								strcat(temp,left_code);
@@ -190,9 +190,12 @@ using namespace std;
      NOT = 262,
      TRUE = 263,
      FALSE = 264,
-     TYPE = 265,
-     ID = 266,
-     RELATIONAL_OP = 267
+     IF = 265,
+     ELSE = 266,
+     WHILE = 267,
+     TYPE = 268,
+     ID = 269,
+     RELATIONAL_OP = 270
    };
 #endif
 /* Tokens.  */
@@ -203,9 +206,12 @@ using namespace std;
 #define NOT 262
 #define TRUE 263
 #define FALSE 264
-#define TYPE 265
-#define ID 266
-#define RELATIONAL_OP 267
+#define IF 265
+#define ELSE 266
+#define WHILE 267
+#define TYPE 268
+#define ID 269
+#define RELATIONAL_OP 270
 
 
 
@@ -225,7 +231,7 @@ struct label_code* Lc_ptr;
 
 
 /* Line 214 of yacc.c  */
-#line 229 "y.tab.c"
+#line 235 "y.tab.c"
 } YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
@@ -237,7 +243,7 @@ struct label_code* Lc_ptr;
 
 
 /* Line 264 of yacc.c  */
-#line 241 "y.tab.c"
+#line 247 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -450,22 +456,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  15
+#define YYFINAL  26
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   66
+#define YYLAST   157
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  23
+#define YYNTOKENS  28
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  7
+#define YYNNTS  12
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  20
+#define YYNRULES  37
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  38
+#define YYNSTATES  77
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   267
+#define YYMAXUTOK   270
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -476,16 +482,16 @@ static const yytype_uint8 yytranslate[] =
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,    18,     2,     2,
-      21,    22,    16,    14,     2,    15,     2,    17,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,    20,
-       2,    13,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,    21,     2,     2,
+      23,    24,    19,    17,     2,    18,     2,    20,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,    27,
+       2,    16,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    19,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    22,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,     2,     2,    25,     2,    26,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -499,7 +505,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15
 };
 
 #if YYDEBUG
@@ -507,29 +514,37 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     5,     8,    13,    18,    21,    24,    27,
-      31,    35,    39,    43,    47,    51,    55,    57,    59,    61,
-      63
+       0,     0,     3,     5,     7,    10,    12,    20,    26,    28,
+      34,    38,    42,    44,    47,    52,    57,    60,    63,    66,
+      70,    74,    78,    83,    87,    89,    91,    95,    99,   103,
+     107,   111,   115,   119,   121,   123,   125,   127
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      24,     0,    -1,    25,    -1,    24,    25,    -1,    26,    13,
-      27,    20,    -1,    29,    13,    27,    20,    -1,    26,    20,
-      -1,    27,    20,    -1,    10,    29,    -1,    21,    27,    22,
-      -1,    27,    19,    27,    -1,    27,    16,    27,    -1,    27,
-      17,    27,    -1,    27,    18,    27,    -1,    27,    14,    27,
-      -1,    27,    15,    27,    -1,    28,    -1,    29,    -1,     3,
-      -1,     4,    -1,    11,    -1
+      29,     0,    -1,    30,    -1,    31,    -1,    30,    30,    -1,
+      33,    -1,    10,    23,    36,    24,    32,    11,    32,    -1,
+      10,    23,    36,    24,    32,    -1,    32,    -1,    12,    23,
+      36,    24,    32,    -1,    25,    33,    26,    -1,    25,    31,
+      26,    -1,    34,    -1,    33,    34,    -1,    35,    16,    37,
+      27,    -1,    39,    16,    37,    27,    -1,    35,    27,    -1,
+      37,    27,    -1,    13,    39,    -1,    37,    15,    37,    -1,
+      36,     5,    36,    -1,    36,     6,    36,    -1,     7,    23,
+      36,    24,    -1,    23,    36,    24,    -1,     8,    -1,     9,
+      -1,    23,    37,    24,    -1,    37,    22,    37,    -1,    37,
+      19,    37,    -1,    37,    20,    37,    -1,    37,    21,    37,
+      -1,    37,    17,    37,    -1,    37,    18,    37,    -1,    38,
+      -1,    39,    -1,     3,    -1,     4,    -1,    14,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   115,   115,   118,   130,   154,   178,   185,   189,   304,
-     306,   309,   311,   313,   315,   317,   319,   328,   338,   342,
-     348
+       0,   114,   114,   121,   122,   144,   148,   197,   232,   233,
+     289,   292,   298,   301,   313,   337,   361,   368,   372,   378,
+     404,   422,   440,   468,   469,   476,   487,   489,   492,   494,
+     496,   498,   500,   502,   511,   521,   525,   531
 };
 #endif
 
@@ -539,10 +554,11 @@ static const yytype_uint16 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "DIGIT", "FLOAT", "AND", "OR", "NOT",
-  "TRUE", "FALSE", "TYPE", "ID", "RELATIONAL_OP", "'='", "'+'", "'-'",
-  "'*'", "'/'", "'%'", "'^'", "';'", "'('", "')'", "$accept",
-  "statement_list", "statement", "declaration", "expression", "number",
-  "identifier", 0
+  "TRUE", "FALSE", "IF", "ELSE", "WHILE", "TYPE", "ID", "RELATIONAL_OP",
+  "'='", "'+'", "'-'", "'*'", "'/'", "'%'", "'^'", "'('", "')'", "'{'",
+  "'}'", "';'", "$accept", "final_code", "code", "constructs",
+  "blocked_list", "statement_list", "statement", "declaration", "rel_exp",
+  "expression", "number", "identifier", 0
 };
 #endif
 
@@ -552,25 +568,27 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267,    61,    43,    45,    42,    47,    37,    94,
-      59,    40,    41
+     265,   266,   267,   268,   269,   270,    61,    43,    45,    42,
+      47,    37,    94,    40,    41,   123,   125,    59
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    23,    24,    24,    25,    25,    25,    25,    26,    27,
-      27,    27,    27,    27,    27,    27,    27,    27,    28,    28,
-      29
+       0,    28,    29,    30,    30,    30,    31,    31,    31,    31,
+      32,    32,    33,    33,    34,    34,    34,    34,    35,    36,
+      36,    36,    36,    36,    36,    36,    37,    37,    37,    37,
+      37,    37,    37,    37,    37,    38,    38,    39
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     2,     4,     4,     2,     2,     2,     3,
-       3,     3,     3,     3,     3,     3,     1,     1,     1,     1,
-       1
+       0,     2,     1,     1,     2,     1,     7,     5,     1,     5,
+       3,     3,     1,     2,     4,     4,     2,     2,     2,     3,
+       3,     3,     4,     3,     1,     1,     3,     3,     3,     3,
+       3,     3,     3,     1,     1,     1,     1,     1
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -578,33 +596,43 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       0,    18,    19,     0,    20,     0,     0,     2,     0,     0,
-      16,    17,     8,     0,    17,     1,     3,     0,     6,     0,
-       0,     0,     0,     0,     0,     7,     0,     9,     0,    14,
-      15,    11,    12,    13,    10,     0,     4,     5
+       0,    35,    36,     0,     0,     0,    37,     0,     0,     0,
+       2,     3,     8,     5,    12,     0,     0,    33,    34,     0,
+       0,    18,     0,    34,     0,     0,     1,     4,    13,     0,
+      16,     0,     0,     0,     0,     0,     0,    17,     0,     0,
+      24,    25,     0,     0,     0,     0,    26,    11,    10,     0,
+      31,    32,    28,    29,    30,    27,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    14,    15,     0,    23,    20,
+      21,     7,    19,     9,    22,     0,     6
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     6,     7,     8,     9,    10,    14
+      -1,     9,    27,    11,    12,    13,    14,    15,    43,    16,
+      17,    23
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -14
-static const yytype_int8 yypact[] =
+#define YYPACT_NINF -57
+static const yytype_int16 yypact[] =
 {
-      22,   -14,   -14,    -3,   -14,    24,    20,   -14,     9,    32,
-     -14,    -2,   -14,   -13,   -14,   -14,   -14,    24,   -14,    24,
-      24,    24,    24,    24,    24,   -14,    24,   -14,    39,    21,
-      21,    15,    15,    15,    15,    46,   -14,   -14
+      55,   -57,   -57,   -18,   -16,    -5,   -57,    80,    55,    37,
+      55,   -57,   -57,    59,   -57,    16,    79,   -57,    24,    67,
+      67,   -57,   121,   -57,    19,     7,   -57,    55,   -57,    80,
+     -57,    80,    80,    80,    80,    80,    80,   -57,    80,    23,
+     -57,   -57,    67,    10,   129,    12,   -57,   -57,   -57,    91,
+      95,    95,    26,    26,    26,    26,   102,    67,    81,   113,
+      67,    67,    30,    80,    30,   -57,   -57,    83,   -57,    -2,
+      -2,    40,   135,   -57,   -57,    30,   -57
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -14,   -14,    30,   -14,    -5,   -14,     7
+     -57,   -57,    57,    52,   -56,    53,   -11,   -57,   -19,    -7,
+     -57,    39
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -614,34 +642,56 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-      13,    19,    20,    21,    22,    23,    24,    11,     4,    27,
-      12,    26,    28,    11,    29,    30,    31,    32,    33,    34,
-      15,    35,    17,     1,     2,     1,     2,     1,     2,    18,
-       3,     4,     3,     4,    24,     4,    16,    21,    22,    23,
-      24,     5,     0,     5,     0,     5,    19,    20,    21,    22,
-      23,    24,    25,    19,    20,    21,    22,    23,    24,    36,
-      19,    20,    21,    22,    23,    24,    37
+      22,    45,    28,    60,    61,    19,    71,    20,    73,     6,
+       1,     2,    44,    44,    28,    60,    61,    60,    61,    76,
+       5,     6,    49,    58,    50,    51,    52,    53,    54,    55,
+       7,    56,    29,    48,    62,    59,    64,    26,    67,    18,
+      38,    69,    70,    30,    21,    47,    57,    18,    36,    18,
+      44,    75,    18,    44,    44,     8,    72,    10,     1,     2,
+      24,    25,     1,     2,    18,     3,    18,     4,     5,     6,
+       1,     2,     5,     6,    39,    40,    41,     0,     7,     0,
+       8,     6,     7,     1,     2,     0,    60,    61,    60,    61,
+      42,     0,     0,     0,     6,     0,    31,    32,    33,    34,
+      35,    36,     0,     7,     0,    68,    37,    74,    31,    32,
+      33,    34,    35,    36,    33,    34,    35,    36,    65,    31,
+      32,    33,    34,    35,    36,     0,     0,     0,    63,    66,
+      31,    32,    33,    34,    35,    36,     0,    46,    31,    32,
+      33,    34,    35,    36,    63,    46,    31,    32,    33,    34,
+      35,    36,    31,    32,    33,    34,    35,    36
 };
 
 static const yytype_int8 yycheck[] =
 {
-       5,    14,    15,    16,    17,    18,    19,     0,    11,    22,
-       3,    13,    17,     6,    19,    20,    21,    22,    23,    24,
-       0,    26,    13,     3,     4,     3,     4,     3,     4,    20,
-      10,    11,    10,    11,    19,    11,     6,    16,    17,    18,
-      19,    21,    -1,    21,    -1,    21,    14,    15,    16,    17,
-      18,    19,    20,    14,    15,    16,    17,    18,    19,    20,
-      14,    15,    16,    17,    18,    19,    20
+       7,    20,    13,     5,     6,    23,    62,    23,    64,    14,
+       3,     4,    19,    20,    25,     5,     6,     5,     6,    75,
+      13,    14,    29,    42,    31,    32,    33,    34,    35,    36,
+      23,    38,    16,    26,    24,    42,    24,     0,    57,     0,
+      16,    60,    61,    27,     5,    26,    23,     8,    22,    10,
+      57,    11,    13,    60,    61,    25,    63,     0,     3,     4,
+       8,     8,     3,     4,    25,    10,    27,    12,    13,    14,
+       3,     4,    13,    14,     7,     8,     9,    -1,    23,    -1,
+      25,    14,    23,     3,     4,    -1,     5,     6,     5,     6,
+      23,    -1,    -1,    -1,    14,    -1,    17,    18,    19,    20,
+      21,    22,    -1,    23,    -1,    24,    27,    24,    17,    18,
+      19,    20,    21,    22,    19,    20,    21,    22,    27,    17,
+      18,    19,    20,    21,    22,    -1,    -1,    -1,    15,    27,
+      17,    18,    19,    20,    21,    22,    -1,    24,    17,    18,
+      19,    20,    21,    22,    15,    24,    17,    18,    19,    20,
+      21,    22,    17,    18,    19,    20,    21,    22
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,    10,    11,    21,    24,    25,    26,    27,
-      28,    29,    29,    27,    29,     0,    25,    13,    20,    14,
-      15,    16,    17,    18,    19,    20,    13,    22,    27,    27,
-      27,    27,    27,    27,    27,    27,    20,    20
+       0,     3,     4,    10,    12,    13,    14,    23,    25,    29,
+      30,    31,    32,    33,    34,    35,    37,    38,    39,    23,
+      23,    39,    37,    39,    31,    33,     0,    30,    34,    16,
+      27,    17,    18,    19,    20,    21,    22,    27,    16,     7,
+       8,     9,    23,    36,    37,    36,    24,    26,    26,    37,
+      37,    37,    37,    37,    37,    37,    37,    23,    36,    37,
+       5,     6,    24,    15,    24,    27,    27,    36,    24,    36,
+      36,    32,    37,    32,    24,    11,    32
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1455,16 +1505,238 @@ yyreduce:
         case 2:
 
 /* Line 1455 of yacc.c  */
-#line 115 "my_compiler.y"
-    {   // forming group of statements
-															 (yyval.str)=(yyvsp[(1) - (1)].Lc_ptr)->code;
-														}
+#line 114 "my_compiler.y"
+    {   cout<<"---------------------INTERMEDIATE CODE GENERATION DONE----------------------"<<endl;
+											cout<<endl;
+											cout<<(yyvsp[(1) - (1)].str);
+
+
+									}
     break;
 
   case 3:
 
 /* Line 1455 of yacc.c  */
-#line 118 "my_compiler.y"
+#line 121 "my_compiler.y"
+    {(yyval.str)=(yyvsp[(1) - (1)].str); cout<<"code-> constructs";}
+    break;
+
+  case 4:
+
+/* Line 1455 of yacc.c  */
+#line 122 "my_compiler.y"
+    {	 //replacing all the next in code with a new label which is given to start of construct following it
+     											 cout<<" code-> code construct "<<endl; 
+     											 char *temp1=(yyvsp[(1) - (2)].str);
+     											 char *find = strstr (temp1,"NEXT");
+			                     label=gen_label();
+														while(find!=NULL){
+														strncpy (find,label,strlen(label));
+														strncpy (find+strlen(label),"    ",(4-strlen(label)));
+														find = strstr (temp1,"NEXT");
+														}
+     										   new_line=(char*)malloc( strlen((yyvsp[(1) - (2)].str))+strlen((yyvsp[(2) - (2)].str))+10);
+     										   strcat(new_line,temp1);
+     										   strcat(new_line,"\n");
+     										   strcat(new_line,label);
+     										   strcat(new_line," : ");
+     										   strcat(new_line,(yyvsp[(2) - (2)].str));
+     										   strcat(new_line,"\n");
+     										   cout<<"AFTER ADDING CONSTRUCT TO code ->"<<endl;
+     										   cout<<new_line<<endl;
+     										   	(yyval.str) = new_line;
+     										}
+    break;
+
+  case 5:
+
+/* Line 1455 of yacc.c  */
+#line 144 "my_compiler.y"
+    { cout<<"code -> statement_list "<<endl;  }
+    break;
+
+  case 6:
+
+/* Line 1455 of yacc.c  */
+#line 148 "my_compiler.y"
+    {
+
+                                                      //1) generate a new label1 2) replace all TRUE with new label1 3)generate next label2      
+                                                      // 4) replace all FAIL with label2  
+                                                      // 5) structure-> IF '(' rel exp ') label1: blocked_list1 goto next label2: blocked_list2    
+                                                      temp = (char *)malloc(strlen((yyvsp[(3) - (7)].str))+10);
+		                                                  temp[0] = 0;		
+																						          strcat(temp,(yyvsp[(3) - (7)].str));                               
+                                                                                                  
+                                                      // finding and replacing all the TRUE WITH LABEL 1;
+                                                      label=gen_label();
+                                                      char *find = strstr (temp,"TRUE");
+																											while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"    ",(4-strlen(label)));
+																											find = strstr (temp,"TRUE");
+																											                 }
+		                                                  // finding and replacing all FAIL with LABEL 2 
+																										  char* label2=gen_label();
+																										  find = strstr (temp,"FAIL");		
+																										  while(find!=NULL){
+																											strncpy (find,label2,strlen(label));
+																											strncpy (find+strlen(label2),"    ",(4-strlen(label2)));
+																											find = strstr (temp,"FAIL");
+																											                 }
+																											new_line = (char *)malloc(strlen(temp)+20+strlen((yyvsp[(5) - (7)].str))+strlen((yyvsp[(7) - (7)].str)));
+																											strcat(new_line,temp);
+																											strcat(new_line,"\n");
+																											strcat(new_line,label);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,(yyvsp[(5) - (7)].str));
+																											strcat(new_line,"\n");
+																											strcat(new_line,"goto NEXT");			
+																											strcat(new_line,"\n");
+																											strcat(new_line,label2);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,(yyvsp[(7) - (7)].str));
+																											strcat(new_line,"\n");
+																											cout<<"IF BLOCK GENERATED -> "<<endl;
+																											cout<<new_line<<endl;
+																											(yyval.str) = new_line; 																	                 
+                                           				}
+    break;
+
+  case 7:
+
+/* Line 1455 of yacc.c  */
+#line 197 "my_compiler.y"
+    {  //1) create a new label 2) replace all TRUE with new label 3) replace all FAIL with NEXT 
+                                                   // 4) structure-> IF '(' rel exp ') new label: blocked_list
+                                                   
+                                                      cout<<"rel-op"<<(yyvsp[(3) - (5)].str)<<"ff";
+                                                      label=gen_label();    
+                                                      temp = (char *)malloc(strlen((yyvsp[(3) - (5)].str))+10);
+		                                                  temp[0] = 0;		
+																						          strcat(temp,(yyvsp[(3) - (5)].str));                               
+                                                                                                  
+                                                      // finding and replacing all the TRUE;
+                                                      char *find = strstr (temp,"TRUE");
+																											while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"    ",(4-strlen(label)));
+																											find = strstr (temp,"TRUE");
+																											}
+		                                                  // finding and replacing all FAIL with Next ( blocked_list is not to be executed)
+																										  cout<<"temp"<<temp<<endl;
+																										  find = strstr (temp,"FAIL");		
+																										  while(find!=NULL){
+																											strncpy (find,"NEXT",4);
+																											find = strstr (temp,"FAIL");
+																											}
+																											
+																											new_line = (char *)malloc(strlen(temp)+10+strlen((yyvsp[(5) - (5)].str)));
+																											strcat(new_line,temp);
+																											strcat(new_line,"\n");
+																											strcat(new_line,label);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,(yyvsp[(5) - (5)].str));
+																											cout<<"IF BLOCK GENERATED -> "<<endl;
+																											cout<<new_line<<endl;
+																											(yyval.str) = new_line;
+		   																						 }
+    break;
+
+  case 8:
+
+/* Line 1455 of yacc.c  */
+#line 232 "my_compiler.y"
+    { (yyval.str)=(yyvsp[(1) - (1)].str);}
+    break;
+
+  case 9:
+
+/* Line 1455 of yacc.c  */
+#line 233 "my_compiler.y"
+    {       temp = (char *)malloc(strlen((yyvsp[(3) - (5)].str))+10);
+		                                                  temp[0] = 0;		
+																						          strcat(temp,(yyvsp[(3) - (5)].str));
+		   			                                          char* label_start = gen_label();
+																											label = gen_label();
+
+																											// finding and replacing all the TRUE with new label1
+                                                      char *find = strstr (temp,"TRUE");
+																											while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"    ",(4-strlen(label)));
+																											find = strstr (temp,"TRUE");
+																											}
+		                                                  // finding and replacing all FAIL with Next ( blocked_list is not to be executed)
+																										  cout<<"temp"<<temp<<endl;
+																										  find = strstr (temp,"FAIL");		
+																										  while(find!=NULL){
+																											strncpy (find,"NEXT",4);
+																											find = strstr (temp,"FAIL");
+																											}
+																											
+																											char * temp2 = (char *)malloc(strlen((yyvsp[(5) - (5)].str))+10);
+		                                                  temp2[0] = 0;		
+																						          strcat(temp2,(yyvsp[(5) - (5)].str));
+																											
+																											find = strstr (temp2,"NEXT");		
+																										  while(find!=NULL){
+																											strncpy (find,label_start,strlen(label));
+																											strncpy (find+strlen(label_start),"    ",(4-strlen(label_start)));
+																											find = strstr (temp2,"NEXT");
+																											}
+																											
+																											new_line = (char *)malloc(strlen(temp)+10+strlen((yyvsp[(5) - (5)].str)));
+																											strcat(new_line,label_start);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,temp);
+																											strcat(new_line,"\n");
+																											strcat(new_line,label);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,temp2);
+																											strcat(new_line,"\n");
+																											strcat(new_line,"goto ");
+																											strcat(new_line,label_start);
+																											cout<<"WHILE BLOCK GENERATED -> "<<endl;
+																											cout<<new_line<<endl;
+																											(yyval.str) = new_line;	   			
+		   																				}
+    break;
+
+  case 10:
+
+/* Line 1455 of yacc.c  */
+#line 289 "my_compiler.y"
+    { cout<<" group of statements i.e list enclosed within parentheses '{ }'"<<endl; 
+																			  (yyval.str)=(yyvsp[(2) - (3)].str);																			
+																			}
+    break;
+
+  case 11:
+
+/* Line 1455 of yacc.c  */
+#line 292 "my_compiler.y"
+    {(yyval.str)=(yyvsp[(2) - (3)].str);}
+    break;
+
+  case 12:
+
+/* Line 1455 of yacc.c  */
+#line 298 "my_compiler.y"
+    {   // forming group of statements
+															 (yyval.str)=(yyvsp[(1) - (1)].Lc_ptr)->code;
+														}
+    break;
+
+  case 13:
+
+/* Line 1455 of yacc.c  */
+#line 301 "my_compiler.y"
     { // appending the new statement at the end of statement_list<<ENDL;
 																	cout<<"STATEMENT LIST (APPENDING)";
 																	new_line = (char *)malloc(strlen((yyvsp[(1) - (2)].str))+strlen((yyvsp[(2) - (2)].Lc_ptr)->code)+10);
@@ -1476,11 +1748,11 @@ yyreduce:
 								                 }
     break;
 
-  case 4:
+  case 14:
 
 /* Line 1455 of yacc.c  */
-#line 130 "my_compiler.y"
-    { printf("Assignment statement along with declaration\n");
+#line 313 "my_compiler.y"
+    { cout<<"Assignment statement along with declaration";
            																  rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
 																						rtn_ptr->addr = (char *)malloc(20);
 																						rtn_ptr->addr =gen_id();
@@ -1506,10 +1778,10 @@ yyreduce:
            																}
     break;
 
-  case 5:
+  case 15:
 
 /* Line 1455 of yacc.c  */
-#line 154 "my_compiler.y"
+#line 337 "my_compiler.y"
     {  printf("Assignment statement \n");
           																		rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
 																							rtn_ptr->addr = (char *)malloc(20);
@@ -1535,10 +1807,10 @@ yyreduce:
           																		}
     break;
 
-  case 6:
+  case 16:
 
 /* Line 1455 of yacc.c  */
-#line 178 "my_compiler.y"
+#line 361 "my_compiler.y"
     {                rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
 																							rtn_ptr->addr = (char *)malloc(20);
 																							rtn_ptr->addr = (yyvsp[(1) - (2)].str);		
@@ -1548,81 +1820,226 @@ yyreduce:
 										 				 }
     break;
 
-  case 7:
+  case 17:
 
 /* Line 1455 of yacc.c  */
-#line 185 "my_compiler.y"
+#line 368 "my_compiler.y"
     {(yyval.Lc_ptr)=(yyvsp[(1) - (2)].Lc_ptr);}
     break;
 
-  case 8:
+  case 18:
 
 /* Line 1455 of yacc.c  */
-#line 189 "my_compiler.y"
+#line 372 "my_compiler.y"
     { printf("Declaration \n");
 																	 (yyval.str)=(yyvsp[(2) - (2)].str); }
     break;
 
-  case 9:
+  case 19:
 
 /* Line 1455 of yacc.c  */
-#line 304 "my_compiler.y"
+#line 378 "my_compiler.y"
+    { cout<<"RELATIONAL OPERATOR"<<(yyvsp[(2) - (3)].str)<<endl;
+																							new_line = (char *)malloc(30);
+																							new_line[0] = 0;																
+																							strcat(new_line,"if(");
+																							strcat(new_line,(yyvsp[(1) - (3)].Lc_ptr)->addr);
+																							strcat(new_line,(yyvsp[(2) - (3)].str));																							
+																							strcat(new_line,(yyvsp[(3) - (3)].Lc_ptr)->addr);
+																							strcat(new_line,") goto TRUE \n goto FAIL");
+																							printf("new line added is = \n");
+																							puts(new_line);																							
+																							temp = (char *)malloc(strlen((yyvsp[(1) - (3)].Lc_ptr)->code)+strlen((yyvsp[(3) - (3)].Lc_ptr)->code)+strlen(new_line));
+		                                          temp[0] = 0;	
+		                                          if ((yyvsp[(1) - (3)].Lc_ptr)->code!=0){
+																								strcat(temp,(yyvsp[(1) - (3)].Lc_ptr)->code);
+																								strcat(temp,"\n");
+																								}		
+		                                          if ((yyvsp[(3) - (3)].Lc_ptr)->code!=0){
+																								strcat(temp,(yyvsp[(3) - (3)].Lc_ptr)->code);
+																								strcat(temp,"\n");
+																								}																																														
+																							strcat(temp,new_line);
+																							printf("Code generated till now is = \n");
+																							puts(temp);
+																							(yyval.str)=temp;
+																							}
+    break;
+
+  case 20:
+
+/* Line 1455 of yacc.c  */
+#line 404 "my_compiler.y"
+    { cout<<"RELATIONAL OPERATOR -> AND "<<endl;
+			  													char *rel_exp1=(yyvsp[(1) - (3)].str),*rel_exp2=(yyvsp[(3) - (3)].str);
+			  													label = gen_label();
+			                            char *find = strstr (rel_exp1,"TRUE");		
+			                            // find and replace all the true with new label
+																	while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"   ",(4-strlen(label)));
+	                                                    find= strstr (rel_exp1,"TRUE");}
+                                  temp= (char *)malloc(strlen(rel_exp1)+strlen(rel_exp2)+10);
+			                            temp[0] = 0;
+                                  strcat(temp,rel_exp1);
+			                            strcat(temp,"\n");
+			                            strcat(temp,label);
+																	strcat(temp," : ");
+																	strcat(temp,rel_exp2);
+																	cout<<"new line= "<<temp<<endl;																	 
+																	(yyval.str) = temp;}
+    break;
+
+  case 21:
+
+/* Line 1455 of yacc.c  */
+#line 422 "my_compiler.y"
+    { cout<<"RELATIONAL OPERATOR -> OR "<<endl;
+			  													char *rel_exp1=(yyvsp[(1) - (3)].str),*rel_exp2=(yyvsp[(3) - (3)].str);
+			  													label =gen_label();
+			                            char *find = strstr (rel_exp1,"FAIL");		
+			                            // find and replace all the fail with new label
+																	while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"   ",(4-strlen(label)));
+	                                                    find= strstr (rel_exp1,"FAIL");}
+                                  temp= (char *)malloc(strlen(rel_exp1)+strlen(rel_exp2)+10);
+			                            temp[0] = 0;
+                                  strcat(temp,rel_exp1);
+                                  strcat(temp,"\n");
+			                            strcat(temp,label);
+																	strcat(temp," : ");			                           
+																	strcat(temp,rel_exp2);
+																	cout<<"new line= "<<temp<<endl;																		
+																	(yyval.str) = temp;}
+    break;
+
+  case 22:
+
+/* Line 1455 of yacc.c  */
+#line 440 "my_compiler.y"
+    {  cout<<"RELATIONAL OPERATOR-> AND "<<endl;    // as the operator is not, all the true will be replaced by flase and false with true
+			                                                                         // for this temp. label xxxx is used
+			  													puts((yyvsp[(3) - (4)].str));
+																	char *rel_exp= (yyvsp[(3) - (4)].str);																	                                   
+																	label = "xxxx";
+																	char *find = strstr (rel_exp,"TRUE");
+																		while(find!=NULL){
+																		strncpy (find,label,strlen(label));
+																		find = strstr (rel_exp,"TRUE");
+																		}
+		
+																	label = "TRUE";
+																	find = strstr (rel_exp,"FAIL");		
+																	while(find!=NULL){
+																		strncpy (find,label,strlen(label));
+																		find = strstr (rel_exp,"FAIL");
+																		}
+
+																	label = "FAIL";
+																	find = strstr (rel_exp,"xxxx");		
+																	while(find!=NULL){
+																		strncpy (find,label,strlen(label));
+																		find = strstr (rel_exp,"xxxx");
+																		}		
+																	(yyval.str) = rel_exp;
+			                          }
+    break;
+
+  case 23:
+
+/* Line 1455 of yacc.c  */
+#line 468 "my_compiler.y"
+    {(yyval.str)=(yyvsp[(2) - (3)].str);}
+    break;
+
+  case 24:
+
+/* Line 1455 of yacc.c  */
+#line 469 "my_compiler.y"
+    { cout<<"TRUE"<<endl;
+			           new_line=(char *)malloc(10);
+			           new_line[0]=0;
+			           strcat(new_line," GOTO TRUE\n");
+			           cout<<"new line added= "<<new_line<<endl;
+			           (yyval.str)=new_line;
+			  				}
+    break;
+
+  case 25:
+
+/* Line 1455 of yacc.c  */
+#line 476 "my_compiler.y"
+    { cout<<"FALSE"<<endl;
+			           new_line=(char *)malloc(10);
+			           new_line[0]=0;
+			           strcat(new_line," GOTO FAIL\n");
+			           cout<<"new line added= "<<new_line<<endl;
+			           (yyval.str)=new_line;
+			  
+			  				}
+    break;
+
+  case 26:
+
+/* Line 1455 of yacc.c  */
+#line 487 "my_compiler.y"
     { (yyval.Lc_ptr)=(yyvsp[(2) - (3)].Lc_ptr);}
     break;
 
-  case 10:
+  case 27:
 
 /* Line 1455 of yacc.c  */
-#line 306 "my_compiler.y"
+#line 489 "my_compiler.y"
     {printf("exp power exp \n");
           															 (yyval.Lc_ptr) =arithmetic_operation((yyvsp[(1) - (3)].Lc_ptr)->code,(yyvsp[(3) - (3)].Lc_ptr)->code,(yyvsp[(1) - (3)].Lc_ptr)->addr,(yyvsp[(3) - (3)].Lc_ptr)->addr,"^");																					
 																							}
     break;
 
-  case 11:
+  case 28:
 
 /* Line 1455 of yacc.c  */
-#line 309 "my_compiler.y"
+#line 492 "my_compiler.y"
     {printf("exp multiplication exp \n");
           															 (yyval.Lc_ptr) =arithmetic_operation((yyvsp[(1) - (3)].Lc_ptr)->code,(yyvsp[(3) - (3)].Lc_ptr)->code,(yyvsp[(1) - (3)].Lc_ptr)->addr,(yyvsp[(3) - (3)].Lc_ptr)->addr,"*");	}
     break;
 
-  case 12:
+  case 29:
 
 /* Line 1455 of yacc.c  */
-#line 311 "my_compiler.y"
+#line 494 "my_compiler.y"
     {printf("exp division exp \n");
           															 (yyval.Lc_ptr) =arithmetic_operation((yyvsp[(1) - (3)].Lc_ptr)->code,(yyvsp[(3) - (3)].Lc_ptr)->code,(yyvsp[(1) - (3)].Lc_ptr)->addr,(yyvsp[(3) - (3)].Lc_ptr)->addr,"/");	}
     break;
 
-  case 13:
+  case 30:
 
 /* Line 1455 of yacc.c  */
-#line 313 "my_compiler.y"
+#line 496 "my_compiler.y"
     {printf("exp module exp \n");
           															 (yyval.Lc_ptr) =arithmetic_operation((yyvsp[(1) - (3)].Lc_ptr)->code,(yyvsp[(3) - (3)].Lc_ptr)->code,(yyvsp[(1) - (3)].Lc_ptr)->addr,(yyvsp[(3) - (3)].Lc_ptr)->addr,"%");	}
     break;
 
-  case 14:
+  case 31:
 
 /* Line 1455 of yacc.c  */
-#line 315 "my_compiler.y"
+#line 498 "my_compiler.y"
     {printf("exp addition exp \n");
           															 (yyval.Lc_ptr) =arithmetic_operation((yyvsp[(1) - (3)].Lc_ptr)->code,(yyvsp[(3) - (3)].Lc_ptr)->code,(yyvsp[(1) - (3)].Lc_ptr)->addr,(yyvsp[(3) - (3)].Lc_ptr)->addr,"+");	}
     break;
 
-  case 15:
+  case 32:
 
 /* Line 1455 of yacc.c  */
-#line 317 "my_compiler.y"
+#line 500 "my_compiler.y"
     {printf("exp substraction exp \n");
           															 (yyval.Lc_ptr) =arithmetic_operation((yyvsp[(1) - (3)].Lc_ptr)->code,(yyvsp[(3) - (3)].Lc_ptr)->code,(yyvsp[(1) - (3)].Lc_ptr)->addr,(yyvsp[(3) - (3)].Lc_ptr)->addr,"-");	}
     break;
 
-  case 16:
+  case 33:
 
 /* Line 1455 of yacc.c  */
-#line 319 "my_compiler.y"
+#line 502 "my_compiler.y"
     { printf("Expression (exp=number) \n");
 														rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
 													  rtn_ptr->addr = (char *)malloc(20);
@@ -1633,10 +2050,10 @@ yyreduce:
 													}
     break;
 
-  case 17:
+  case 34:
 
 /* Line 1455 of yacc.c  */
-#line 328 "my_compiler.y"
+#line 511 "my_compiler.y"
     { printf("exp equals to identifier which is initialized");    					
    					                rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
 													  rtn_ptr->addr = (char *)malloc(20);
@@ -1647,37 +2064,37 @@ yyreduce:
 														}
     break;
 
-  case 18:
+  case 35:
 
 /* Line 1455 of yacc.c  */
-#line 338 "my_compiler.y"
+#line 521 "my_compiler.y"
     {  printf("DIGIT : %d\n",(yyvsp[(1) - (1)].i_num));	
 												temp = (char *)malloc(20);
            							snprintf(temp, 10,"%d",(yyvsp[(1) - (1)].i_num));
 												(yyval.str) = temp;}
     break;
 
-  case 19:
+  case 36:
 
 /* Line 1455 of yacc.c  */
-#line 342 "my_compiler.y"
+#line 525 "my_compiler.y"
     {  printf("FLOAT: %d\n",(yyvsp[(1) - (1)].f_num));		
 												temp = (char *)malloc(20);
            							snprintf(temp, 10,"%d",(yyvsp[(1) - (1)].f_num));
 												(yyval.str) = temp;}
     break;
 
-  case 20:
+  case 37:
 
 /* Line 1455 of yacc.c  */
-#line 348 "my_compiler.y"
+#line 531 "my_compiler.y"
     { (yyval.str)=(yyvsp[(1) - (1)].str); printf("Identifier : %s\n",(yyvsp[(1) - (1)].str));}
     break;
 
 
 
 /* Line 1455 of yacc.c  */
-#line 1681 "y.tab.c"
+#line 2098 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1889,7 +2306,7 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 351 "my_compiler.y"
+#line 534 "my_compiler.y"
 
 
 main() {

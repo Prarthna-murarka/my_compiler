@@ -18,6 +18,11 @@ RELATIONAL_OPERATORS [ "==" ">=" "<=" "<" ">" "!="]
                         
 [ \t] ;
 [\n] ;											 
+
+"if" 	{ return (IF); }
+"else" 	{ return (ELSE); }
+"while"	{ return (WHILE); }
+
 {DIGIT}  							{ yylval.i_num=atoi(yytext);  return DIGIT; }												 
 {FLOAT}               { yylval.f_num=atoi(yytext);  return FLOAT; }
 {OTHERS}              { char a= yytext[0];

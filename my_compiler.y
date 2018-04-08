@@ -64,7 +64,7 @@ label_code* arithmetic_operation(char* left_code,char* right_code,char *left_add
 																							strcat(new_line,right_addr);
 																							printf("new line added is = \n");
 																							puts(new_line);
-																							temp = (char *)malloc(strlen(right_code)+strlen(left_code)+6);
+																							temp = (char *)malloc(strlen(right_code)+strlen(left_code)+20);
 		                                          temp[0] = 0;	
 		                                          if (left_code!=0){
 																								strcat(temp,left_code);
@@ -94,11 +94,11 @@ struct label_code* Lc_ptr;}
 
 %token <i_num> DIGIT
 %token <f_num> FLOAT
-%token <str> AND OR NOT TRUE FALSE
+%token <str> AND OR NOT TRUE FALSE IF ELSE WHILE
 %token <str> TYPE
 %token <str> ID
 
-%type <str> identifier number rel_exp declaration statement_list 
+%type <str> identifier number rel_exp declaration statement_list blocked_list constructs code
 %type <Lc_ptr> statement expression
 
 
@@ -110,6 +110,187 @@ struct label_code* Lc_ptr;}
 
 
 %%
+
+final_code : code {   cout<<"---------------------INTERMEDIATE CODE GENERATION DONE----------------------"<<endl;
+											cout<<endl;
+											cout<<$1;
+									}
+
+code : constructs {$$=$1; cout<<"code-> constructs";}
+     | code code {	 //replacing all the next in code with a new label which is given to start of construct following it
+     											 cout<<" code-> code construct "<<endl; 
+     											 char *temp1=$1;
+     											 char *find = strstr (temp1,"NEXT");
+			                     label=gen_label();
+														while(find!=NULL){
+														strncpy (find,label,strlen(label));
+														strncpy (find+strlen(label),"    ",(4-strlen(label)));
+														find = strstr (temp1,"NEXT");
+														}
+     										   new_line=(char*)malloc( strlen($1)+strlen($2)+10);
+     										   strcat(new_line,temp1);
+     										   strcat(new_line,"\n");
+     										   strcat(new_line,label);
+     										   strcat(new_line," : ");
+     										   strcat(new_line,$2);
+     										   strcat(new_line,"\n");
+     										   cout<<"AFTER ADDING CONSTRUCT TO code ->"<<endl;
+     										   cout<<new_line<<endl;
+     										   	$$ = new_line;
+     										}				
+     
+     | statement_list { cout<<"code -> statement_list "<<endl;  }
+
+
+
+constructs : IF '(' rel_exp ')' blocked_list ELSE blocked_list {
+
+                                                      //1) generate a new label1 2) replace all TRUE with new label1 3)generate next label2      
+                                                      // 4) replace all FAIL with label2  
+                                                      // 5) structure-> IF '(' rel exp ') label1: blocked_list1 goto next label2: blocked_list2    
+                                                      temp = (char *)malloc(strlen($3)+10);
+		                                                  temp[0] = 0;		
+																						          strcat(temp,$3);                               
+                                                                                                  
+                                                      // finding and replacing all the TRUE WITH LABEL 1;
+                                                      label=gen_label();
+                                                      char *find = strstr (temp,"TRUE");
+																											while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"    ",(4-strlen(label)));
+																											find = strstr (temp,"TRUE");
+																											                 }
+		                                                  // finding and replacing all FAIL with LABEL 2 
+																										  char* label2=gen_label();
+																										  find = strstr (temp,"FAIL");		
+																										  while(find!=NULL){
+																											strncpy (find,label2,strlen(label));
+																											strncpy (find+strlen(label2),"    ",(4-strlen(label2)));
+																											find = strstr (temp,"FAIL");
+																											                 }
+																											new_line = (char *)malloc(strlen(temp)+20+strlen($5)+strlen($7));
+																											strcat(new_line,temp);
+																											strcat(new_line,"\n");
+																											strcat(new_line,label);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,$5);
+																											strcat(new_line,"\n");
+																											strcat(new_line,"goto NEXT");			
+																											strcat(new_line,"\n");
+																											strcat(new_line,label2);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,$7);
+																											strcat(new_line,"\n");
+																											cout<<"IF BLOCK GENERATED -> "<<endl;
+																											cout<<new_line<<endl;
+																											$$ = new_line; 																	                 
+                                           				}
+
+
+
+
+
+						| IF '(' rel_exp ')' blocked_list {  //1) create a new label 2) replace all TRUE with new label 3) replace all FAIL with NEXT 
+                                                   // 4) structure-> IF '(' rel exp ') new label: blocked_list
+                                                   
+                                                      cout<<"rel-op"<<$3<<"ff";
+                                                      label=gen_label();    
+                                                      temp = (char *)malloc(strlen($3)+10);
+		                                                  temp[0] = 0;		
+																						          strcat(temp,$3);                               
+                                                                                                  
+                                                      // finding and replacing all the TRUE;
+                                                      char *find = strstr (temp,"TRUE");
+																											while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"    ",(4-strlen(label)));
+																											find = strstr (temp,"TRUE");
+																											}
+		                                                  // finding and replacing all FAIL with Next ( blocked_list is not to be executed)
+																										  cout<<"temp"<<temp<<endl;
+																										  find = strstr (temp,"FAIL");		
+																										  while(find!=NULL){
+																											strncpy (find,"NEXT",4);
+																											find = strstr (temp,"FAIL");
+																											}
+																											
+																											new_line = (char *)malloc(strlen(temp)+10+strlen($5));
+																											strcat(new_line,temp);
+																											strcat(new_line,"\n");
+																											strcat(new_line,label);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,$5);
+																											cout<<"IF BLOCK GENERATED -> "<<endl;
+																											cout<<new_line<<endl;
+																											$$ = new_line;
+		   																						 }
+		   			| blocked_list { $$=$1;}
+		   			| WHILE '(' rel_exp ')' blocked_list {       temp = (char *)malloc(strlen($3)+10);
+		                                                  temp[0] = 0;		
+																						          strcat(temp,$3);
+		   			                                          char* label_start = gen_label();
+																											label = gen_label();
+
+																											// finding and replacing all the TRUE with new label1
+                                                      char *find = strstr (temp,"TRUE");
+																											while(find!=NULL){
+																											strncpy (find,label,strlen(label));
+																											strncpy (find+strlen(label),"    ",(4-strlen(label)));
+																											find = strstr (temp,"TRUE");
+																											}
+		                                                  // finding and replacing all FAIL with Next ( blocked_list is not to be executed)
+																										  cout<<"temp"<<temp<<endl;
+																										  find = strstr (temp,"FAIL");		
+																										  while(find!=NULL){
+																											strncpy (find,"NEXT",4);
+																											find = strstr (temp,"FAIL");
+																											}
+																											
+																											char * temp2 = (char *)malloc(strlen($5)+10);
+		                                                  temp2[0] = 0;		
+																						          strcat(temp2,$5);
+																											
+																											find = strstr (temp2,"NEXT");		
+																										  while(find!=NULL){
+																											strncpy (find,label_start,strlen(label));
+																											strncpy (find+strlen(label_start),"    ",(4-strlen(label_start)));
+																											find = strstr (temp2,"NEXT");
+																											}
+																											
+																											new_line = (char *)malloc(strlen(temp)+10+strlen($5));
+																											strcat(new_line,label_start);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,temp);
+																											strcat(new_line,"\n");
+																											strcat(new_line,label);
+																											strcat(new_line," : ");
+																											strcat(new_line,"\n");
+																											strcat(new_line,temp2);
+																											strcat(new_line,"\n");
+																											strcat(new_line,"goto ");
+																											strcat(new_line,label_start);
+																											cout<<"WHILE BLOCK GENERATED -> "<<endl;
+																											cout<<new_line<<endl;
+																											$$ = new_line;	   			
+		   																				}
+		   			                                    
+																		 
+		   																						 
+		   			; 																			 
+
+
+
+blocked_list : '{' statement_list '}' { cout<<" group of statements i.e list enclosed within parentheses '{ }'"<<endl; 
+																			  $$=$2;																			
+																			}
+					 	  |'{' constructs '}'{$$=$2;}
+		     		;
+																			              
+
 
 
 statement_list : statement {   // forming group of statements
@@ -127,7 +308,7 @@ statement_list : statement {   // forming group of statements
 								;                       
 
 statement :	
-           declaration '=' expression ';' { printf("Assignment statement along with declaration\n");
+           declaration '=' expression ';' { cout<<"Assignment statement along with declaration";
            																  rtn_ptr= (struct label_code *)malloc(sizeof(struct label_code));
 																						rtn_ptr->addr = (char *)malloc(20);
 																						rtn_ptr->addr =gen_id();
@@ -202,7 +383,7 @@ rel_exp :  expression RELATIONAL_OP expression { cout<<"RELATIONAL OPERATOR"<<$2
 																							strcat(new_line,") goto TRUE \n goto FAIL");
 																							printf("new line added is = \n");
 																							puts(new_line);																							
-																							temp = (char *)malloc(strlen($1->code)+strlen($3->code)+20);
+																							temp = (char *)malloc(strlen($1->code)+strlen($3->code)+strlen(new_line));
 		                                          temp[0] = 0;	
 		                                          if ($1->code!=0){
 																								strcat(temp,$1->code);
@@ -240,7 +421,7 @@ rel_exp :  expression RELATIONAL_OP expression { cout<<"RELATIONAL OPERATOR"<<$2
 			  													char *rel_exp1=$1,*rel_exp2=$3;
 			  													label =gen_label();
 			                            char *find = strstr (rel_exp1,"FAIL");		
-			                            // find and replace all the true with new label
+			                            // find and replace all the fail with new label
 																	while(find!=NULL){
 																											strncpy (find,label,strlen(label));
 																											strncpy (find+strlen(label),"   ",(4-strlen(label)));
